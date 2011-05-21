@@ -14,14 +14,27 @@ class UserRegistrationsController < Devise::RegistrationsController
 
   # POST /resource/sign_up
   def create
-    @user = build_resource(params[:user])
-    logger.debug(@user)
-    if resource.save
-      set_flash_message(:notice, :signed_up)
-      sign_in_and_redirect(:user, @user)
-    else
-      clean_up_passwords(resource)
-      render_with_scope(:new)
+    
+    ok_to_register = User.check_user_record params
+    
+    ActiveRecord::Base.establish_connection
+
+    if ok_to_register
+      @user = build_resource(params[:user])
+      logger.debug(@user)
+      if resource.save
+        set_flash_message(:notice, :signed_up)
+        sign_in_and_redirect(:user, @user)
+      else
+        clean_up_passwords(resource)
+        render_with_scope(:new)
+      end
+
+    else  
+      flash[:signup_error] = "Email is not available"
+      logger.info "Email #{params[:user][:email]} is not available"
+      redirect_to signup_path
+
     end
   end
 

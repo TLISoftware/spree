@@ -81,5 +81,15 @@ class User < ActiveRecord::Base
   def self.current=(user)
     Thread.current[:user] = user
   end
+  
+  def self.check_user_record(params)
+    ActiveRecord::Base.establish_connection :allpopart
+    
+    connection = ActiveRecord::Base.connection
+    
+    result = connection.execute("SELECT count(*) FROM customers WHERE customers_email_address = '#{params[:user][:email]}'").first[0]
+    
+    result == 0
+  end
 
 end
