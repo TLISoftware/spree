@@ -52,6 +52,7 @@ class CheckoutController < Spree::BaseController
   end
 
   def load_order
+    @occasion = Occasion.get_special_occasion
     @order = current_order
     redirect_to cart_path and return unless @order and @order.checkout_allowed?
     redirect_to cart_path and return if @order.completed?
