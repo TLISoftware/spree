@@ -22,12 +22,12 @@ class CheckoutController < Spree::BaseController
       if @order.state == "complete" || @order.completed?
         flash[:notice] = I18n.t(:order_processed_successfully)
         flash[:commerce_tracking] = "nothing special"
-        respond_with(@order, :location => completion_route)
+        respond_with(@order, :location => completion_route) and return
       else
-        respond_with(@order, :location => checkout_state_path(@order.state))
+        respond_with(@order, :location => checkout_state_path(@order.state)) and return
       end
     else
-      respond_with(@order) { |format| format.html { render :edit } }
+      respond_with(@order) { |format| format.html { render :edit } } and return
     end
   end
 
